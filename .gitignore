@@ -3,3 +3,4 @@ notebooks/*
 !notebooks/*.ipynb
 credentials/*
 */credentials/*
+.env
