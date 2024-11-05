@@ -1,3 +1,5 @@
 volumes/*
 notebooks/*
 !notebooks/*.ipynb
+credentials/*
+*/credentials/*
