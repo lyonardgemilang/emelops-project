@@ -64,7 +64,7 @@ services:
     volumes:
       - ./volumes/mlruns:/mlflow/mlruns
       - ./credentials:/credentials:ro
-    command: ["sh", "-c", "pip install mlflow psycopg2-binary boto3 google-cloud-storage && mlflow server --backend-store-uri postgresql+psycopg2://$POSTGRES_USER:$POSTGRES_PASSWORD@db/$POSTGRES_DB --host 0.0.0.0 --port 5000 --serve-artifacts --default-artifact-root gs://$GCS_BUCKET_NAME_TRACKER"]
+    command: ["sh", "-c", "pip install mlflow psycopg2-binary boto3 google-cloud-storage && mlflow server --app-name mlops --backend-store-uri postgresql+psycopg2://$POSTGRES_USER:$POSTGRES_PASSWORD@db/$POSTGRES_DB --host 0.0.0.0 --port 5000 --serve-artifacts --default-artifact-root gs://$GCS_BUCKET_NAME_TRACKER"]
     depends_on:
       # - s3
       - db
