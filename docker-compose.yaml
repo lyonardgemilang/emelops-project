@@ -85,23 +85,27 @@ services:
       retries: 3
       start_period: 10s
 
-  # notebook:
-  #   restart: always
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.jupyter
-  #   container_name: jupyter
-  #   ports:
-  #     - "8888:8888"
-  #   environment:
-  #     - JUPYTER_TOKEN=${JUPYTER_TOKEN}
-  #     - MLFLOW_TRACKING_URI=http://tracker:5000
-  #     - MLFLOW_S3_ENDPOINT_URL=http://minio:443
-  #     - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-  #     - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-  #   volumes:
-  #     - ./notebooks:/home/jovyan/notebooks
-  #   depends_on:
-  #     - s3
-  #     - db
-  #     - tracker
+  notebook:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.jupyter
+    container_name: jupyter
+    ports:
+      - "8888:8888"
+    environment:
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
+      - MLFLOW_TRACKING_URI=http://tracker:5000
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:443
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - GOOGLE_CLOUD_INSTANCE=${GOOGLE_CLOUD_INSTANCE}
+      - MLFLOW_URL=${MLFLOW_URL}
+      - GCS_BUCKET_NAME_DATASET=${GCS_BUCKET_NAME_DATASET}
+      - GOOGLE_APPLICATION_CREDENTIALS_NOTEBOOK=${GOOGLE_APPLICATION_CREDENTIALS_NOTEBOOK}
+    volumes:
+      - ./notebooks:/home/jovyan/notebooks
+    depends_on:
+      - s3
+      - db
+      - tracker
