@@ -2,3 +2,4 @@ volumes/*
 notebooks/*
 !notebooks/*.ipynb
 credentials/*
+.env
