@@ -1,0 +1,12 @@
+mlflow
+scikit-learn
+matplotlib
+seaborn
+xgboost
+numpy
+pandas
+minio
+s3fs
+boto3
+python-dotenv
+google-cloud-storage

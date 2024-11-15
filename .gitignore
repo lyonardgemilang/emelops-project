@@ -1,0 +1,6 @@
+volumes/*
+notebooks/*
+!notebooks/Example*.ipynb
+credentials/*
+*/credentials/*
+.env
