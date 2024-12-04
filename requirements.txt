@@ -10,3 +10,5 @@ minio
 s3fs
 boto3
 python-dotenv
+scikit-learn
+pynvml
