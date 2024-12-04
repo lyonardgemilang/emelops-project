@@ -3,7 +3,6 @@ scikit-learn
 matplotlib
 seaborn
 xgboost
-catboost
 numpy
 pandas
 minio
@@ -12,3 +11,4 @@ boto3
 python-dotenv
 scikit-learn
 pynvml
+google-cloud-storage
