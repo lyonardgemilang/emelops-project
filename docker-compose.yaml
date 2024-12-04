@@ -91,8 +91,7 @@ services:
       - ./certs:/root/certs
       - ./ini_script.py:/root/mlflow/auth/ini_script.py
     depends_on:
-      # - s3
-      # - s3
+      - s3
       - db
     healthcheck:
       test: ["CMD", "curl", "-f", "https://localhost:5000"]
