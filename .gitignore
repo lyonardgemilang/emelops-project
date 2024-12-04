@@ -164,7 +164,7 @@ cython_debug/
 
 volumes/*
 certs/*
-!certs/certgen
+!certs/certgen*
 mlruns/*
 volumes/*
 notebooks/*
