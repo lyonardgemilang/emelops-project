@@ -31,7 +31,7 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=mlflow
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - ./volumes/postgres_data:/var/lib/postgresql/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -64,13 +64,15 @@ services:
       - mlops
 
   tracker:
-    restart: always
+
     build:
       context: .
       dockerfile: Dockerfile.mlflow
     container_name: mlflow
     ports:
-      - "5001:5000"
+      - "80:5000"
+    env_file:
+      - .env
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -89,6 +91,7 @@ services:
       - ./certs:/root/certs
       - ./ini_script.py:/root/mlflow/auth/ini_script.py
     depends_on:
+      # - s3
       # - s3
       - db
     healthcheck:
