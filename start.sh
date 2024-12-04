@@ -5,6 +5,7 @@ export MLFLOW_S3_ENDPOINT_URL=$MLFLOW_S3_ENDPOINT_URL
 export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
 export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
 export MLFLOW_DEBUG=true
+export MLFLOW_ENABLE_SYSTEM_METRICS_LOGGING=true
 
 echo "Environment Variables for Debugging:"
 echo "------------------------------------"
