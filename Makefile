@@ -1,61 +1,46 @@
-# Variabel
-VENV_DIR = venv
-PYTHON = $(VENV_DIR)/bin/python
-PIP = $(VENV_DIR)/bin/pip
-NOTEBOOKS_DIR = notebooks
-NOTEBOOKS = Example.ipynb Example_cloud.ipynb Example_local.ipynb
-MLFLOW_SERVER_PORT = 8888
-MLFLOW_BACKEND_STORE = ./mlruns
-MLFLOW_ARTIFACT_STORE = ./mlartifacts
+SHELL := /bin/bash
 
-# Target untuk membuat virtual environment
-$(VENV_DIR)/bin/activate: requirements.txt
-	@echo "Membuat virtual environment..."
-	python3 -m venv $(VENV_DIR)
-	$(PIP) install --upgrade pip
-	$(PIP) install -r requirements.txt
+# Detect the OS (Linux vs. Darwin/macOS)
+OS := $(shell uname -s)
 
-# Menjalankan MLflow Tracking Server
-mlflow_server: $(VENV_DIR)/bin/activate
-	@echo "Menjalankan MLflow Tracking Server di port $(MLFLOW_SERVER_PORT)..."
-	$(VENV_DIR)/bin/mlflow server \
-		--backend-store-uri $(MLFLOW_BACKEND_STORE) \
-		--default-artifact-root $(MLFLOW_ARTIFACT_STORE) \
-		--port $(MLFLOW_SERVER_PORT)
+# Define a variable DOCKER_CMD that might be "docker compose" or "sudo docker compose"
+ifneq (,$(findstring Linux,$(OS)))
+    # On Linux, often need 'sudo' for Docker unless the user is in the docker group
+    DOCKER_CMD = sudo docker compose
+else ifneq (,$(findstring Darwin,$(OS)))
+    # On macOS, typically no sudo required
+    DOCKER_CMD = docker compose
+else
+    # Fallback to no sudo if OS is something else
+    DOCKER_CMD = docker compose
+endif
 
-# Menjalankan notebook 'Example.ipynb'
-run_example: $(VENV_DIR)/bin/activate
-	@echo "Menjalankan notebook Example.ipynb..."
-	$(VENV_DIR)/bin/jupyter nbconvert --to notebook --execute $(NOTEBOOKS_DIR)/Example.ipynb --inplace
+# Default target if you type just `make`
+.DEFAULT_GOAL := run
 
-# Menjalankan notebook 'Example_cloud.ipynb'
-run_example_cloud: $(VENV_DIR)/bin/activate
-	@echo "Menjalankan notebook Example_cloud.ipynb..."
-	$(VENV_DIR)/bin/jupyter nbconvert --to notebook --execute $(NOTEBOOKS_DIR)/Example_cloud.ipynb --inplace
+.PHONY: network run down logs clean
 
-# Menjalankan notebook 'Example_local.ipynb'
-run_example_local: $(VENV_DIR)/bin/activate
-	@echo "Menjalankan notebook Example_local.ipynb..."
-	$(VENV_DIR)/bin/jupyter nbconvert --to notebook --execute $(NOTEBOOKS_DIR)/Example_local.ipynb --inplace
+## network: Create the mlops network if not exists
+network:
+	@echo "Creating 'mlops' network if it doesn't exist..."
+	-docker network create mlops
 
-# Menjalankan semua notebook
-run_all_notebooks: run_example run_example_cloud run_example_local
+## run: Create the network first, then run docker compose
+run: network
+	@echo "Running '$(DOCKER_CMD) up -d --build'..."
+	$(DOCKER_CMD) up -d --build
 
-# Membersihkan environment
+## down: Stop and remove containers (but keep volumes)
+down:
+	@echo "Stopping and removing containers..."
+	$(DOCKER_CMD) down
+
+## logs: Follow logs of all containers
+logs:
+	@echo "Attaching logs (Ctrl+C to quit)..."
+	$(DOCKER_CMD) logs -f
+
+## clean: Stop containers and remove volumes
 clean:
-	@echo "Menghapus virtual environment dan file sementara..."
-	rm -rf $(VENV_DIR)
-	rm -rf __pycache__
-
-# Bantuan
-help:
-	@echo "Gunakan make <target>:"
-	@echo "  mlflow_server       - Menjalankan MLflow Tracking Server"
-	@echo "  run_example         - Menjalankan notebook Example.ipynb"
-	@echo "  run_example_cloud   - Menjalankan notebook Example_cloud.ipynb"
-	@echo "  run_example_local   - Menjalankan notebook Example_local.ipynb"
-	@echo "  run_all_notebooks   - Menjalankan semua notebook"
-	@echo "  clean               - Membersihkan environment"
-
-# Default target
-.DEFAULT_GOAL := help
+	@echo "Stopping and removing containers, including volumes..."
+	$(DOCKER_CMD) down -v
