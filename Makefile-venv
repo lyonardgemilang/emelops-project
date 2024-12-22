@@ -1,0 +1,49 @@
+SHELL := /bin/bash
+
+# Detect the OS (Linux vs. Darwin/macOS/Windows)
+OS := $(shell uname -s)
+
+# For Python, we might pick 'python3' on Linux/macOS, or 'python' on Windows
+ifeq ($(OS),Linux)
+    PYTHON_CMD = python3
+else ifeq ($(OS),Darwin)
+    PYTHON_CMD = python3
+else
+    # Fallback (e.g. Windows)
+    PYTHON_CMD = python
+endif
+
+# Name of the virtual environment folder
+VENV_DIR := venv
+
+# Default target
+.DEFAULT_GOAL := run
+
+.PHONY: create-venv install run logs clean
+
+## create-venv: Create a Python virtual environment
+create-venv:
+	@echo "Creating virtual environment in '$(VENV_DIR)'..."
+	$(PYTHON_CMD) -m venv $(VENV_DIR)
+
+## install: Install dependencies from requirements.txt
+install: create-venv
+	@echo "Activating virtual environment and installing requirements..."
+	. $(VENV_DIR)/bin/activate && pip install --upgrade pip
+	. $(VENV_DIR)/bin/activate && pip install -r requirements.txt
+
+## run: Activate the venv and run your application (e.g. 'main.py')
+run: install
+	@echo "Running main.py inside virtual environment..."
+	. $(VENV_DIR)/bin/activate && python main.py
+
+## logs: Example placeholder for logs
+# There's no direct 'logs' concept outside Docker, so you can adapt as needed
+logs:
+	@echo "Logs target is not directly applicable outside Docker."
+	@echo "Perhaps tail -f a log file, or run any debugging commands here."
+
+## clean: Remove the virtual environment
+clean:
+	@echo "Removing virtual environment '$(VENV_DIR)'..."
+	rm -rf $(VENV_DIR)
