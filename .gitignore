@@ -167,7 +167,6 @@ certs/*
 !certs/certgen*
 mlruns/*
 volumes/*
-notebooks/*
 !notebooks/Example*.ipynb
 credentials/*
 */credentials/*
