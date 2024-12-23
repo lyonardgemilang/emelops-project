@@ -162,6 +162,7 @@ cython_debug/
 #.idea/
 
 
+S17/*
 volumes/*
 certs/*
 !certs/certgen*
