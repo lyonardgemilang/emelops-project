@@ -1,2 +1,2 @@
-# emelops-project
+# mlops-project
 Project Otomatisasi Stress Detector
