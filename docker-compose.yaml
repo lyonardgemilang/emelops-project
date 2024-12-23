@@ -125,6 +125,23 @@ services:
 volumes:
   minio_data:
 
+model-serving:
+    build:
+      context: .
+      dockerfile: Dockerfile.model
+    container_name: model-serving
+    ports:
+      - "1234:1234"       # Expose MLflow serving on localhost:1234
+    depends_on:
+      - tracker           # Must start after MLflow tracker
+      - s3                # Must reach MinIO if storing model artifacts in s3
+    environment:
+      # Provide MLflow & S3 environment variables:
+      MLFLOW_TRACKING_URI: http://tracker:5000
+      MLFLOW_S3_ENDPOINT_URL: http://s3:443
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+
 networks:
   mlops:
     external: true
