@@ -13,3 +13,6 @@ scikit-learn
 psutil
 pynvml
 google-cloud-storage
+fastapi
+uvicorn
+pydantic
