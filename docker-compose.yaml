@@ -126,7 +126,7 @@ services:
   #   networks:
   #     - mlops
 
-  deploy:
+  fastapi:
     build:
       context: .
       dockerfile: Dockerfile.deploy
