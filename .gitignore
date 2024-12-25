@@ -172,3 +172,7 @@ volumes/*
 !notebooks/Example*.ipynb
 credentials/*
 */credentials/*
+*.pkl
+mlartifacts/*
+mlartifacts/*
+logs

@@ -1,5 +1,3 @@
-version: '3.9'  # or whichever version you prefer
-
 services:
   s3:
     restart: always
@@ -102,36 +100,11 @@ services:
     networks:
       - mlops
 
-  # If you ever need the Jupyter notebook service:
-  # notebook:
-  #   restart: always
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.jupyter
-  #   container_name: jupyter
-  #   ports:
-  #     - "8888:8888"
-  #   environment:
-  #     - JUPYTER_TOKEN=${JUPYTER_TOKEN}
-  #     - MLFLOW_TRACKING_URI=http://tracker:5000
-  #     - MLFLOW_S3_ENDPOINT_URL=http://minio:443
-  #     - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-  #     - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-  #   volumes:
-  #     - ./notebooks:/home/jovyan/notebooks
-  #   depends_on:
-  #     - s3
-  #     - db
-  #     - tracker
-  #   networks:
-  #     - mlops
-
   fastapi:
     build:
       context: .
-      dockerfile: Dockerfile.deploy
-    container_name: model-deploy
-    # Our FastAPI / Uvicorn inside Docker will listen on 8000
+      dockerfile: Dockerfile.fastapi
+    container_name: fastapi
     ports:
       - "8000:8000"
     depends_on:
@@ -139,9 +112,15 @@ services:
       - s3
     environment:
       MLFLOW_TRACKING_URI: http://tracker:5000
-      MLFLOW_S3_ENDPOINT_URL: http://s3:443
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    volumes:
+      - ./logs:/app/logs        # Persist logs outside the container
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: always      
     networks:
       - mlops
 

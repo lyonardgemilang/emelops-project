@@ -1,0 +1,25 @@
+# Menggunakan Python 3.9 sebagai base image
+FROM python:3.9-slim
+
+# Menentukan working directory di container
+WORKDIR /app
+
+# Install system dependencies (curl for healthchecks, etc.)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Menyalin file deploy.py ke dalam container
+COPY service.py /app/
+
+# Menginstal dependensi yang diperlukan
+RUN pip install --no-cache-dir fastapi[standard] uvicorn pydantic mlflow
+
+# Create a directory for logs and set permissions
+RUN mkdir -p /app/logs && chmod -R 755 /app/logs
+
+# Expose the application port
+EXPOSE 8000
+
+# Use a production-grade WSGI server (uvicorn) with proper options
+CMD ["uvicorn", "service:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
