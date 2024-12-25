@@ -30,6 +30,12 @@ run: network
 	@echo "Running '$(DOCKER_CMD) up -d --build'..."
 	$(DOCKER_CMD) up -d --build
 
+## train: Run the 'emelops_fix.ipynb' notebook (locally)
+train:
+	@$(MAKE) run
+	@echo "Running the training notebook 'emelops_fix.ipynb' locally..."
+	python -m jupyter nbconvert --to notebook --execute emelops_fix.ipynb
+
 ## down: Stop and remove containers (but keep volumes)
 down:
 	@echo "Stopping and removing containers..."
