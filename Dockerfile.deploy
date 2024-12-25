@@ -1,20 +1,14 @@
-# Gunakan image Python yang ringan
+# Menggunakan Python 3.9 sebagai base image
 FROM python:3.9-slim
 
-# Set working directory di dalam container
+# Menentukan working directory di container
 WORKDIR /app
 
-# Salin dependencies
-COPY requirements.txt .
+# Menyalin file deploy.py ke dalam container
+COPY deploy.py /app/
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Menginstal dependensi yang diperlukan
+RUN pip install --no-cache-dir fastapi[standard] uvicorn pydantic
 
-# Salin semua kode project ke dalam container
-COPY . .
-
-# Ekspos port yang digunakan FastAPI
-EXPOSE 8000
-
-# Jalankan FastAPI menggunakan Uvicorn
+# Menentukan perintah untuk menjalankan aplikasi menggunakan Uvicorn
 CMD ["uvicorn", "deploy:app", "--host", "0.0.0.0", "--port", "8000"]
